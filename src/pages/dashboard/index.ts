@@ -1,3 +1,4 @@
-import IndexPage from './IndexPage';
+import BooksPage from './BookPage';
+import UserPage from './UserPage';
 
-export { IndexPage };
+export { BooksPage, UserPage };

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, User2, X } from 'lucide-react';
+import { BookText, User2, X } from 'lucide-react';
 import { useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -10,8 +10,8 @@ interface SidebarProps {
 
 const sidebarItems = [
   {
-    name: 'Dashboard',
-    icon: <LayoutDashboard />,
+    name: 'Buku',
+    icon: <BookText />,
     path: '/',
   },
   {

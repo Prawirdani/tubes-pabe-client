@@ -30,6 +30,23 @@ declare global {
     email: string;
     role: UserRole;
   };
+
+  type Author = {
+    id: number;
+    name: string;
+    bio: string;
+  };
+
+  type Book = {
+    id: number;
+    title: string;
+    description: string;
+    author: Author;
+    price: number;
+    image: string;
+    createdAt: Date;
+    updateAt: Date;
+  };
 }
 
 export {};

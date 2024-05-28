@@ -6,9 +6,8 @@ import AuthProvider from './context/AuthProvider';
 import { useEffect, useState } from 'react';
 import Loader from '@/components/ui/loader';
 import { useAuth } from './context/useAuth';
-import { IndexPage } from './pages/dashboard';
+import { BooksPage, UserPage } from './pages/dashboard';
 import { Toaster } from './components/ui/toaster';
-import UserPage from './pages/dashboard/UserPage';
 
 export default function App() {
   const router = createBrowserRouter([
@@ -21,7 +20,7 @@ export default function App() {
           children: [
             {
               path: '/',
-              element: <IndexPage />,
+              element: <BooksPage />,
             },
             {
               path: '/users',
