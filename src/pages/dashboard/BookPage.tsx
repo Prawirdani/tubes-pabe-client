@@ -22,7 +22,7 @@ function Page() {
   return loading ? (
     <Loader />
   ) : (
-    <>
+    <section>
       <TitleSetter title="Dashboard" />
       <div className="-space-y-1 mb-4">
         <H2>Buku</H2>
@@ -37,6 +37,6 @@ function Page() {
           <BookCard key={book.id} book={book} />
         ))}
       </div>
-    </>
+    </section>
   );
 }
