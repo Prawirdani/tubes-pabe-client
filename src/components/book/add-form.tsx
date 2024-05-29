@@ -11,8 +11,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AddBookSchema, addBookSchema } from '@/lib/schemas/book';
 import { useBooks } from '@/context/BookProvider';
+import { useAuthor } from '@/context/AuthorProvider';
+import Loader from '../ui/loader';
 
 export default function AddBookForm() {
+  const { loading, authors } = useAuthor();
+
   const [open, setOpen] = useState(false);
 
   const form = useForm<AddBookSchema>({
@@ -64,12 +68,6 @@ export default function AddBookForm() {
     }
   }
 
-  const dummyAuthors: Author[] = [
-    { id: 1, name: 'Fikri Rasyid', bio: 'Lorem ipsum' },
-    { id: 2, name: 'John Doe', bio: 'Lorem ipsum' },
-    { id: 4, name: 'Lorem', bio: 'Lorem ipsum' },
-  ];
-
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   let imageInputRef: HTMLInputElement;
   const { ref, ...imageRegister } = register('image');
@@ -101,119 +99,123 @@ export default function AddBookForm() {
       {/* Dialog Trigger Button */}
 
       <DialogContent className="sm:max-w-[850px] px-8">
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <DialogHeader className="mb-4">
-              <DialogTitle>Tambah Buku baru</DialogTitle>
-            </DialogHeader>
-            <div className="grid grid-cols-3 gap-8 mb-4">
-              <input
-                type="file"
-                id="image"
-                hidden
-                {...imageRegister}
-                ref={(e) => {
-                  imageInputRef = e!;
-                }}
-                onChange={imageOnChange}
-              />
-              <div
-                className="col-span-1 border rounded-md justify-center items-center flex flex-col hover:cursor-pointer"
-                onClick={handleImageClick}
-              >
-                {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" className="object-cover" />
-                ) : (
-                  <BookImage className="h-12 w-12" />
-                )}
-                {errors.image && (
-                  <span className="mt-2 text-sm text-destructive text-center">{String(errors.image.message)}</span>
-                )}
-              </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <DialogHeader className="mb-4">
+                <DialogTitle>Tambah Buku baru</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-3 gap-8 mb-4">
+                <input
+                  type="file"
+                  id="image"
+                  hidden
+                  {...imageRegister}
+                  ref={(e) => {
+                    imageInputRef = e!;
+                  }}
+                  onChange={imageOnChange}
+                />
+                <div
+                  className="col-span-1 border rounded-md justify-center items-center flex flex-col hover:cursor-pointer"
+                  onClick={handleImageClick}
+                >
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Preview" className="object-cover" />
+                  ) : (
+                    <BookImage className="h-12 w-12" />
+                  )}
+                  {errors.image && (
+                    <span className="mt-2 text-sm text-destructive text-center">{String(errors.image.message)}</span>
+                  )}
+                </div>
 
-              <div className="space-y-2 col-span-2">
-                <FormField
-                  control={control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="title">Judul Buku</FormLabel>
-                      <FormControl>
-                        <Input id="title" placeholder="Masukkan Judul Buku" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="price">Harga</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Masukkan harga buku"
-                          id="price"
-                          type="number"
-                          {...field}
-                          onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="authorId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="authorId">Kategori Menu</FormLabel>
-                      <Select onValueChange={field.onChange} name={field.name}>
-                        <FormControl id="authorId">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih Author buku" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {dummyAuthors.map((author) => (
-                            <SelectItem key={author.id} value={String(author.id)}>
-                              {author.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div>
+                <div className="space-y-2 col-span-2">
                   <FormField
                     control={control}
-                    name="description"
+                    name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="description">Deskripsi</FormLabel>
+                        <FormLabel htmlFor="title">Judul Buku</FormLabel>
                         <FormControl>
-                          <Textarea id="description" placeholder="Masukkan deskripsi buku" {...field} />
+                          <Input id="title" placeholder="Masukkan Judul Buku" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="price">Harga</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Masukkan harga buku"
+                            id="price"
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name="authorId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="authorId">Kategori Menu</FormLabel>
+                        <Select onValueChange={field.onChange} name={field.name}>
+                          <FormControl id="authorId">
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Author buku" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {authors.map((author) => (
+                              <SelectItem key={author.id} value={String(author.id)}>
+                                {author.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div>
+                    <FormField
+                      control={control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel htmlFor="description">Deskripsi</FormLabel>
+                          <FormControl>
+                            <Textarea id="description" placeholder="Masukkan deskripsi buku" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit">
-                {isSubmitting && <Loader2 />}
-                <span>Tambah</span>
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <div className="flex justify-end">
+                <Button type="submit">
+                  {isSubmitting && <Loader2 />}
+                  <span>Tambah</span>
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );

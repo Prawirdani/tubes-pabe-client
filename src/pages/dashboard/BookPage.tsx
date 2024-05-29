@@ -4,7 +4,6 @@ import TitleSetter from '@/components/pageTitle';
 import { H2 } from '@/components/typography';
 import Loader from '@/components/ui/loader';
 import BooksProvider, { useBooks } from '@/context/BookProvider';
-import { useEffect } from 'react';
 
 export default function BookPage() {
   return (
@@ -16,9 +15,6 @@ export default function BookPage() {
 
 function Page() {
   const { loading, books } = useBooks();
-  useEffect(() => {
-    console.log(books);
-  }, [books]);
   return loading ? (
     <Loader />
   ) : (
