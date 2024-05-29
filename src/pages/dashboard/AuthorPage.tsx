@@ -4,12 +4,15 @@ import Loader from '@/components/ui/loader';
 import { useAuthor } from '@/context/AuthorProvider';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { KeyRound, SquarePen } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
+import AddAuthorForm from '@/components/author/add-form';
 
 export default function AuthorPage() {
   const { loading, authors } = useAuthor();
 
+  useEffect(() => {}, []);
   return loading ? (
     <Loader />
   ) : (
@@ -18,6 +21,10 @@ export default function AuthorPage() {
       <div className="-space-y-1 mb-4">
         <H2>Author</H2>
         <p>Manajemen Author Buku</p>
+      </div>
+
+      <div className="mb-4 flex justify-end">
+        <AddAuthorForm />
       </div>
 
       <Card className="p-8">
@@ -32,7 +39,7 @@ export default function AuthorPage() {
           </TableHeader>
           <TableBody>
             {authors.map((author) => (
-              <AuthorRow author={author} />
+              <AuthorRow key={author.id} author={author} />
             ))}
           </TableBody>
         </Table>
@@ -51,12 +58,9 @@ function AuthorRow({ author }: AuthorRowProps) {
       <TableCell className="text-nowrap">{author.name}</TableCell>
       <TableCell>{author.bio}</TableCell>
       <TableCell>{99}</TableCell>
-      <TableCell className="flex justify-center gap-4">
+      <TableCell>
         <Button onClick={() => console.log(author)} variant="outline">
           <SquarePen className="h-4 w-4" />
-        </Button>
-        <Button onClick={() => console.log(author)} variant="outline">
-          <KeyRound className="h-4 w-4" />
         </Button>
       </TableCell>
     </TableRow>

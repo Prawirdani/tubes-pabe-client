@@ -1,9 +1,12 @@
 import { Fetch } from '@/api/fetcher';
+import { AddAuthorSchema } from '@/lib/schemas/author';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 type AuthorContext = {
   loading: boolean;
   authors: Author[];
+  addAuthor: (data: AddAuthorSchema) => Promise<Response>;
+  invalidate: () => Promise<void>;
 };
 
 const Context = createContext<AuthorContext>({} as AuthorContext);
@@ -25,8 +28,26 @@ export default function AuthorProvider({ children }: { children: React.ReactNode
     return resBody.data;
   }
 
+  async function addAuthor(data: AddAuthorSchema) {
+    return Fetch('/api/authors', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...data }),
+    });
+  }
+
+  async function invalidate() {
+    setLoading(true);
+    const data = await fetchAuthors();
+    setAuthors(data!);
+    setLoading(false);
+  }
+
   return (
-    <Context.Provider value={{ loading, authors }}>
+    <Context.Provider value={{ loading, authors, addAuthor, invalidate }}>
       <>{children}</>
     </Context.Provider>
   );
