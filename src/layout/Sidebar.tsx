@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { BookText, User2, X } from 'lucide-react';
+import { BookText, PencilLine, User2, X } from 'lucide-react';
 import { useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -18,6 +18,11 @@ const sidebarItems = [
     name: 'Pengguna',
     icon: <User2 />,
     path: '/users',
+  },
+  {
+    name: 'Author',
+    icon: <PencilLine />,
+    path: '/authors',
   },
 ];
 

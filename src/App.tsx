@@ -8,6 +8,7 @@ import Loader from '@/components/ui/loader';
 import { useAuth } from './context/useAuth';
 import { BooksPage, UserPage } from './pages/dashboard';
 import { Toaster } from './components/ui/toaster';
+import AuthorPage from './pages/dashboard/AuthorPage';
 
 export default function App() {
   const router = createBrowserRouter([
@@ -25,6 +26,10 @@ export default function App() {
             {
               path: '/users',
               element: <UserPage />,
+            },
+            {
+              path: '/authors',
+              element: <AuthorPage />,
             },
           ],
         },

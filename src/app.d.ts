@@ -47,6 +47,14 @@ declare global {
     createdAt: Date;
     updateAt: Date;
   };
+
+  type Author = {
+    id: number;
+    name: string;
+    bio: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
 
 export {};
