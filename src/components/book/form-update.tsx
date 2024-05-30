@@ -3,31 +3,30 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2, BookImage } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AddBookSchema, addBookSchema } from '@/lib/schemas/book';
+import { UpdateBookSchema, updateBookSchema } from '@/lib/schemas/book';
 import { useBooks } from '@/context/BookProvider';
 import { useAuthor } from '@/context/AuthorProvider';
 import Loader from '../ui/loader';
 
-export default function BookAddForm() {
+interface Props {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  updateTarget: Book;
+}
+
+export default function BookUpdateForm({ open, setOpen, updateTarget }: Props) {
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const { loading, authors } = useAuthor();
+  const { updateBook, invalidate, deleteBook } = useBooks();
 
-  const [open, setOpen] = useState(false);
-
-  const form = useForm<AddBookSchema>({
-    resolver: zodResolver(addBookSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      authorId: '',
-      price: 0,
-      image: '',
-    },
+  const form = useForm<UpdateBookSchema>({
+    resolver: zodResolver(updateBookSchema),
   });
 
   const {
@@ -38,34 +37,44 @@ export default function BookAddForm() {
     formState: { isSubmitting, errors },
   } = form;
 
-  const { addBook, invalidate } = useBooks();
-  async function onSubmit(data: AddBookSchema) {
-    try {
-      const formData = new FormData();
-      formData.append(
-        'data',
-        JSON.stringify({
-          title: data.title,
-          description: data.description,
-          authorId: Number(data.authorId),
-          price: Number(data.price),
-        }),
-      );
+  async function onSubmit(data: UpdateBookSchema) {
+    const formData = new FormData();
+    formData.append(
+      'data',
+      JSON.stringify({
+        title: data.title,
+        description: data.description,
+        authorId: Number(data.authorId),
+        price: Number(data.price),
+      }),
+    );
+    if (data.image) {
       formData.append('image', data.image[0]);
-
-      const res = await addBook(formData);
-
-      if (!res.ok) {
-        toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
-        return;
-      }
-
-      toast({ description: 'Berhasil menambahkan buku' });
-      await invalidate();
-      setOpen(false);
-    } catch (error) {
-      toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
     }
+
+    const res = await updateBook(updateTarget.id, formData);
+    if (!res.ok) {
+      toast({ description: 'Gagal updata data buku', variant: 'destructive' });
+      return;
+    }
+
+    toast({ description: 'Berhasil updata data buku' });
+    await invalidate();
+    setOpen(false);
+  }
+
+  async function handleDelete() {
+    setDeleteLoading(true);
+    const res = await deleteBook(updateTarget.id);
+    if (!res.ok) {
+      toast({ description: 'Gagal menghapus data buku', variant: 'destructive' });
+      setDeleteLoading(false);
+      return;
+    }
+
+    toast({ description: 'Berhasil menghapus data buku' });
+    await invalidate();
+    setOpen(false);
   }
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -75,6 +84,7 @@ export default function BookAddForm() {
   const handleImageClick = () => {
     imageInputRef.click();
   };
+
   const imageOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     form.setValue('image', e.target.files);
@@ -85,19 +95,18 @@ export default function BookAddForm() {
   };
 
   useEffect(() => {
-    reset();
+    reset({
+      title: updateTarget.title ?? '',
+      description: updateTarget.description ?? '',
+      authorId: String(updateTarget.author?.id) ?? '',
+      price: updateTarget.price ?? 0,
+    });
     setImagePreview(null);
-  }, [open]);
+    setDeleteLoading(false);
+  }, [open, updateTarget]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* Dialog Trigger Button */}
-      <Button className="space-x-1" onClick={() => setOpen(true)}>
-        <Plus />
-        <span>Buku</span>
-      </Button>
-      {/* Dialog Trigger Button */}
-
       <DialogContent className="sm:max-w-[850px] px-8">
         {loading ? (
           <Loader />
@@ -105,7 +114,7 @@ export default function BookAddForm() {
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <DialogHeader className="mb-4">
-                <DialogTitle>Tambah Buku baru</DialogTitle>
+                <DialogTitle>Update data Buku</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-3 gap-8 mb-4">
                 <input
@@ -125,7 +134,11 @@ export default function BookAddForm() {
                   {imagePreview ? (
                     <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
                   ) : (
-                    <BookImage className="h-12 w-12" />
+                    <img
+                      src={`/api/images/${updateTarget.image}`}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
                   )}
                   {errors.image && (
                     <span className="mt-2 text-sm text-destructive text-center">{String(errors.image.message)}</span>
@@ -174,7 +187,7 @@ export default function BookAddForm() {
                         <Select onValueChange={field.onChange} name={field.name}>
                           <FormControl id="authorId">
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih Author buku" />
+                              <SelectValue placeholder={updateTarget.author.name} defaultValue={field.value} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -207,9 +220,13 @@ export default function BookAddForm() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                <Button type="button" onClick={handleDelete} variant="destructive" disabled={deleteLoading}>
+                  <span>Hapus Buku</span>
+                  {deleteLoading && <Loader2 className="animate-spin ml-2" />}
+                </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  <span>Tambah</span>
+                  <span>Simpan</span>
                   {isSubmitting && <Loader2 className="animate-spin ml-2" />}
                 </Button>
               </div>

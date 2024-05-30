@@ -3,10 +3,12 @@ import { formatIDR } from '@/lib/formatter';
 
 interface Props {
   book: Book;
+  onClick?: () => void;
 }
-export default function BookCard({ book }: Props) {
+
+export default function BookCard({ book, onClick }: Props) {
   return (
-    <Card className="hover:bg-gray-200 hover:cursor-pointer shadow-xl">
+    <Card onClick={onClick} className="hover:bg-gray-200 hover:cursor-pointer shadow-xl">
       <div className="h-[70%] overflow-hidden">
         <img className="rounded-t-lg h-full w-full object-cover" src={`/api/images/${book.image}`} alt="" />
       </div>

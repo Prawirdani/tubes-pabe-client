@@ -9,17 +9,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '../ui/label';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import BookUpdateForm from './form-update';
 
 export default function Page() {
-  const { loading, books, search } = useBooks();
-
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [updateTarget, setUpdateTarget] = useState<Book>({} as Book);
   const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
       (async () => await search(searchQuery))();
     }, 500);
     return () => clearTimeout(delayInputTimeoutId);
   }, [searchQuery]);
+
+  const { loading, books, search } = useBooks();
+
+  const triggerUpdateDialog = (book: Book) => {
+    setUpdateTarget(book);
+    setOpenUpdateDialog(true);
+  };
 
   return loading ? (
     <Loader />
@@ -32,6 +41,7 @@ export default function Page() {
       </div>
       <div className="flex justify-end mb-4">
         <BookAddForm />
+        <BookUpdateForm open={openUpdateDialog} setOpen={setOpenUpdateDialog} updateTarget={updateTarget} />
       </div>
 
       <Card className="p-8 flex flex-col gap-8">
@@ -50,10 +60,10 @@ export default function Page() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 justify-center">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} onClick={() => triggerUpdateDialog(book)} />
           ))}
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} onClick={() => triggerUpdateDialog(book)} />
           ))}
         </div>
       </Card>

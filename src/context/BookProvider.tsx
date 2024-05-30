@@ -4,10 +4,11 @@ import { createContext, useContext, useEffect, useState } from 'react';
 type Context = {
   loading: boolean;
   books: Book[];
-
-  addBook: (formData: FormData) => Promise<Response>;
-  invalidate: () => Promise<void>;
   search: (query: string) => Promise<void>;
+  invalidate: () => Promise<void>;
+  addBook: (formData: FormData) => Promise<Response>;
+  updateBook: (id: number, formData: FormData) => Promise<Response>;
+  deleteBook: (id: number) => Promise<Response>;
 };
 export const BooksContext = createContext<Context>({} as Context);
 export const useBooks = () => useContext(BooksContext);
@@ -24,15 +25,33 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
   }, []);
 
   async function fetchBooks() {
-    const response = await Fetch('/api/books');
+    const response = await Fetch('/api/books', {
+      credentials: 'include',
+    });
     const resBody = (await response.json()) as ApiResponse<Book[]>;
     return resBody.data;
   }
 
   async function addBook(formData: FormData) {
     return Fetch('/api/books', {
+      credentials: 'include',
       method: 'POST',
       body: formData,
+    });
+  }
+
+  async function updateBook(id: number, formData: FormData) {
+    return Fetch(`/api/books/${id}`, {
+      credentials: 'include',
+      method: 'PUT',
+      body: formData,
+    });
+  }
+
+  async function deleteBook(id: number) {
+    return Fetch(`/api/books/${id}`, {
+      credentials: 'include',
+      method: 'DELETE',
     });
   }
 
@@ -41,7 +60,9 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
       await invalidate();
       return;
     }
-    const response = await Fetch(`/api/books?search=${query}`);
+    const response = await Fetch(`/api/books?search=${query}`, {
+      credentials: 'include',
+    });
     const resBody = (await response.json()) as ApiResponse<Book[]>;
     setBooks(resBody.data);
   }
@@ -52,7 +73,7 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
   }
 
   return (
-    <BooksContext.Provider value={{ loading, books, addBook, invalidate, search }}>
+    <BooksContext.Provider value={{ loading, books, invalidate, search, addBook, updateBook, deleteBook }}>
       <>{children}</>
     </BooksContext.Provider>
   );
