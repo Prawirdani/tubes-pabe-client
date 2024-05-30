@@ -7,6 +7,7 @@ type Context = {
 
   addBook: (formData: FormData) => Promise<Response>;
   invalidate: () => Promise<void>;
+  search: (query: string) => Promise<void>;
 };
 export const BooksContext = createContext<Context>({} as Context);
 export const useBooks = () => useContext(BooksContext);
@@ -35,15 +36,23 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
     });
   }
 
+  async function search(query: string) {
+    if (!query || query === '') {
+      await invalidate();
+      return;
+    }
+    const response = await Fetch(`/api/books?search=${query}`);
+    const resBody = (await response.json()) as ApiResponse<Book[]>;
+    setBooks(resBody.data);
+  }
+
   async function invalidate() {
-    setLoading(true);
     const data = await fetchBooks();
-    setBooks(data!);
-    setLoading(false);
+    setBooks(data);
   }
 
   return (
-    <BooksContext.Provider value={{ loading, books, addBook, invalidate }}>
+    <BooksContext.Provider value={{ loading, books, addBook, invalidate, search }}>
       <>{children}</>
     </BooksContext.Provider>
   );

@@ -208,9 +208,9 @@ export default function BookAddForm() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button type="submit">
-                  {isSubmitting && <Loader2 />}
+                <Button type="submit" disabled={isSubmitting}>
                   <span>Tambah</span>
+                  {isSubmitting && <Loader2 className="animate-spin ml-2" />}
                 </Button>
               </div>
             </form>
