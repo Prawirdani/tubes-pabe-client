@@ -15,10 +15,11 @@ export const useAuthor = () => useContext(Context);
 export default function AuthorProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authors, setAuthors] = useState<Author[]>([]);
+
   useEffect(() => {
     fetchAuthors().then((data) => {
+      setAuthors(data);
       setLoading(false);
-      setAuthors(data!);
     });
   }, []);
 

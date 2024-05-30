@@ -39,7 +39,7 @@ type Context = {
   // Fetch State
   loading: boolean;
   // Data State
-  users: User[] | null;
+  users: User[];
   // Revalidate Data
   invalidate: () => Promise<void>;
   // add new meja
@@ -54,7 +54,7 @@ export const UsersContext = createContext<Context>({} as Context);
 export const useUsers = () => useContext(UsersContext);
 
 export default function UsersProvider({ children }: { children: React.ReactNode }) {
-  const [users, setUsers] = useState<User[] | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

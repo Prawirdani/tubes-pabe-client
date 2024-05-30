@@ -7,10 +7,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { KeyRound, SquarePen } from 'lucide-react';
 import { useUsers } from '@/context/UserProvider';
-import { RegisterForm } from './RegisterForm';
-import { UserUpdateForm } from './UpdateForm';
-import { ResetPasswordForm } from './ResetPasswordForm';
 import { titleCase } from '@/lib/utils';
+import { ResetPasswordForm } from './form-reset-password';
+import { RegisterUserForm } from './form-register';
 
 export default function Page() {
   const { loading, users } = useUsers();
@@ -39,8 +38,8 @@ export default function Page() {
       </div>
 
       <div className="flex justify-end mb-4">
-        <RegisterForm />
-        <UserUpdateForm open={openUpdateDialog} setOpen={setOpenUpdateDialog} updateTarget={updateTarget} />
+        <RegisterUserForm />
+        <ResetPasswordForm open={openUpdateDialog} setOpen={setOpenUpdateDialog} updateTarget={updateTarget} />
         <ResetPasswordForm open={openResetPass} setOpen={setOpenResetPass} updateTarget={updateTarget} />
       </div>
       <Card className="p-8">

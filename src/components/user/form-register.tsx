@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { RegisterSchema, registerSchema, useUsers } from '@/context/UserProvider';
 import { isErrorResponse } from '@/api/fetcher';
 
-export const RegisterForm = () => {
+export const RegisterUserForm = () => {
   const { invalidate, registerUser } = useUsers();
   const [open, setOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);

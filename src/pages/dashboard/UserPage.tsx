@@ -1,5 +1,5 @@
+import Page from '@/components/user/Page';
 import UsersProvider from '@/context/UserProvider';
-import Page from './user/Page';
 
 export default function UserPage() {
   return (

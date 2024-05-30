@@ -17,7 +17,7 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     fetchBooks().then((data) => {
-      setBooks(data!);
+      setBooks(data);
       setLoading(false);
     });
   }, []);

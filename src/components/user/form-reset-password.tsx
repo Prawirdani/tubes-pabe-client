@@ -7,20 +7,20 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { UpdateSchema, updateSchema, useUsers } from '@/context/UserProvider';
+import { ResetPasswordSchema, resetPasswordSchema, useUsers } from '@/context/UserProvider';
 
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   updateTarget: User;
 }
-export const UserUpdateForm = ({ open, setOpen, updateTarget }: Props) => {
+export const ResetPasswordForm = ({ open, setOpen, updateTarget }: Props) => {
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const { invalidate, updateUser } = useUsers();
+  const { invalidate, resetPassword } = useUsers();
 
-  const form = useForm<UpdateSchema>({
-    resolver: zodResolver(updateSchema),
+  const form = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const {
@@ -33,14 +33,14 @@ export const UserUpdateForm = ({ open, setOpen, updateTarget }: Props) => {
   useEffect(() => {
     reset({
       id: updateTarget.id,
-      nama: updateTarget.nama,
-      email: updateTarget.email,
+      newPassword: '',
+      repeatPassword: '',
     });
     setApiError(null);
   }, [open, updateTarget]);
 
-  const onSubmit = async (data: UpdateSchema) => {
-    const res = await updateUser(data);
+  const onSubmit = async (data: ResetPasswordSchema) => {
+    const res = await resetPassword(data);
     if (!res.ok) {
       const resBody = (await res.json()) as ErrorResponse;
       setApiError(resBody.error.message);
@@ -61,43 +61,48 @@ export const UserUpdateForm = ({ open, setOpen, updateTarget }: Props) => {
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader className="mb-4">
-              <DialogTitle>Update Data Pengguna</DialogTitle>
+              <DialogTitle>Reset Password Pengguna</DialogTitle>
             </DialogHeader>
             <div className="mb-4 space-y-2">
-              {/* Input Nama Pengguna */}
+              {/* Input New Password */}
               <FormField
                 control={control}
-                name="nama"
+                name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="nama">Nama Pengguna</FormLabel>
+                    <FormLabel htmlFor="newPassword">Password Baru</FormLabel>
                     <FormControl>
-                      <Input id="nama" placeholder="Masukkan nama pengguna" {...field} />
+                      <Input id="newPassword" type="password" placeholder="Masukkan password baru" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Input Nama Pengguna */}
+              {/* Input New Password */}
 
-              {/* Input Username  */}
+              {/* Input Repeat Password */}
               <FormField
                 control={control}
-                name="email"
+                name="repeatPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="username">Username</FormLabel>
+                    <FormLabel htmlFor="repeatPassword">Ulangi password</FormLabel>
                     <FormControl>
-                      <Input id="username" placeholder="Masukkan email pengguna" {...field} />
+                      <Input
+                        id="repeatPassword"
+                        type="password"
+                        placeholder="Masukkan ulang password baru"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Input Username  */}
+              {/* Input Repeat Password */}
+
               <p className="text-sm text-destructive">{apiError}</p>
             </div>
-
             <div className="flex justify-end">
               <Button type="submit">
                 {isSubmitting && <Loader2 />}

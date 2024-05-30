@@ -1,7 +1,7 @@
 // app.d.ts
 declare global {
   type ApiResponse<T> = {
-    data: T | null;
+    data: T;
     message?: string;
   };
 

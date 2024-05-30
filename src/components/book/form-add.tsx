@@ -14,7 +14,7 @@ import { useBooks } from '@/context/BookProvider';
 import { useAuthor } from '@/context/AuthorProvider';
 import Loader from '../ui/loader';
 
-export default function AddBookForm() {
+export default function BookAddForm() {
   const { loading, authors } = useAuthor();
 
   const [open, setOpen] = useState(false);
