@@ -7,14 +7,12 @@ type Context = {
   loading: boolean;
   // Data State
   users: User[];
-  // Revalidate Data
+  // Invalidate users Data
   invalidate: () => Promise<void>;
-  // add new meja
   registerUser: (data: UserRegisterSchema) => Promise<Response>;
-  // update meja
-  updateUser: (data: UserUpdateSchema) => Promise<Response>;
-  // reset password
-  resetPassword: (data: UserResetPasswordSchema) => Promise<Response>;
+  updateUser: (id: number, data: UserUpdateSchema) => Promise<Response>;
+  resetPassword: (id: number, data: UserResetPasswordSchema) => Promise<Response>;
+  deleteUser: (id: number) => Promise<Response>;
 };
 
 export const UsersContext = createContext<Context>({} as Context);
@@ -34,15 +32,15 @@ export default function UsersProvider({ children }: { children: React.ReactNode 
     await FetchToast(fetchUsers)().then((data) => setUsers(data));
   };
 
-  const fetchUsers = async () => {
+  async function fetchUsers() {
     const response = await Fetch('/api/users', {
       credentials: 'include',
     });
     const resBody = (await response.json()) as ApiResponse<User[]>;
     return resBody.data;
-  };
+  }
 
-  const registerUser = async (data: UserRegisterSchema) => {
+  async function registerUser(data: UserRegisterSchema) {
     return await Fetch('/api/auth/register', {
       method: 'POST',
       headers: {
@@ -50,33 +48,43 @@ export default function UsersProvider({ children }: { children: React.ReactNode 
       },
       credentials: 'include',
       body: JSON.stringify({
-        nama: data.nama,
-        email: data.email,
-        password: data.password,
+        ...data,
       }),
     });
-  };
+  }
 
-  const updateUser = async (data: UserUpdateSchema) => {
-    return await Fetch(`/api/users/${data.id}`, {
+  async function updateUser(id: number, data: UserUpdateSchema) {
+    return await Fetch(`/api/users/${id}`, {
       method: 'PUT',
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        nama: data.nama,
-        email: data.email,
+        ...data,
       }),
     });
-  };
+  }
 
-  const resetPassword = async (data: UserResetPasswordSchema) => {
-    return await Fetch(`/api/users/${data.id}/reset-password`, {
+  async function resetPassword(id: number, data: UserResetPasswordSchema) {
+    return await Fetch(`/api/users/${id}/reset-password`, {
       method: 'PUT',
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        password: data.newPassword,
+        ...data,
       }),
     });
-  };
+  }
+
+  async function deleteUser(id: number) {
+    return await Fetch(`/api/users/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+  }
 
   return (
     <UsersContext.Provider
@@ -87,6 +95,7 @@ export default function UsersProvider({ children }: { children: React.ReactNode 
         registerUser,
         updateUser,
         resetPassword,
+        deleteUser,
       }}
     >
       {children}
