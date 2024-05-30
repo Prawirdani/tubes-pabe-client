@@ -35,6 +35,7 @@ declare global {
     id: number;
     name: string;
     bio: string;
+    totalBooks: number;
   };
 
   type Book = {

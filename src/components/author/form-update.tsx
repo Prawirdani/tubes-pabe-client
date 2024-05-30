@@ -3,27 +3,27 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthor } from '@/context/AuthorProvider';
-import { AddAuthorSchema, addAuthorSchema } from '@/lib/schemas/author';
+import { UpdateAuthorSchema, updateAuthorSchema } from '@/lib/schemas/author';
 import { isErrorResponse } from '@/api/fetcher';
 
-export default function AddAuthorForm() {
-  const [open, setOpen] = useState(false);
+interface Props {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  updateTarget: Author;
+}
+
+export default function UpdateAuthorForm({ open, setOpen, updateTarget }: Props) {
   const [apiError, setApiError] = useState<string | null>(null);
+  const { updateAuthor, invalidate } = useAuthor();
 
-  const { addAuthor, invalidate } = useAuthor();
-
-  const form = useForm<AddAuthorSchema>({
-    resolver: zodResolver(addAuthorSchema),
-    defaultValues: {
-      name: '',
-      bio: '',
-    },
+  const form = useForm<UpdateAuthorSchema>({
+    resolver: zodResolver(updateAuthorSchema),
   });
 
   const {
@@ -33,36 +33,33 @@ export default function AddAuthorForm() {
     formState: { isSubmitting },
   } = form;
 
-  async function onSubmit(data: AddAuthorSchema) {
+  useEffect(() => {
+    reset({
+      name: updateTarget.name,
+      bio: updateTarget.bio,
+    });
+    setApiError(null);
+  }, [open, updateTarget]);
+
+  async function onSubmit(data: UpdateAuthorSchema) {
     try {
-      const res = await addAuthor(data);
+      const res = await updateAuthor(updateTarget.id, data);
 
       const resBody = await res.json();
       if (!res.ok) {
         setApiError(isErrorResponse(resBody) ? resBody.error.message : 'Terjadi Kesalahan');
         return;
       }
-      toast({ description: 'Berhasil menambahkan buku' });
+      toast({ description: 'Berhasil update data author' });
       await invalidate();
       setOpen(false);
     } catch (error) {
-      toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
+      toast({ description: 'Gagal update data author', variant: 'destructive' });
     }
   }
 
-  useEffect(() => {
-    reset();
-  }, [open]);
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* Dialog Trigger Button */}
-      <Button className="space-x-1" onClick={() => setOpen(true)}>
-        <Plus />
-        <span>Author</span>
-      </Button>
-      {/* Dialog Trigger Button */}
-
       <DialogContent className="sm:max-w-[500px] px-8">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -101,7 +98,7 @@ export default function AddAuthorForm() {
             {apiError && <p className="text-destructive text-sm text-end mb-4">Test</p>}
             <div className="flex justify-end">
               <Button type="submit" disabled={isSubmitting}>
-                <span>Tambah</span>
+                <span>Simpan</span>
                 {isSubmitting && <Loader2 className="ml-2 animate-spin" />}
               </Button>
             </div>

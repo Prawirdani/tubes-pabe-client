@@ -1,11 +1,13 @@
 import { Fetch } from '@/api/fetcher';
-import { AddAuthorSchema } from '@/lib/schemas/author';
+import { AddAuthorSchema, UpdateAuthorSchema } from '@/lib/schemas/author';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 type AuthorContext = {
   loading: boolean;
   authors: Author[];
   addAuthor: (data: AddAuthorSchema) => Promise<Response>;
+  updateAuthor: (id: number, data: UpdateAuthorSchema) => Promise<Response>;
+  deleteAuthor: (id: number) => Promise<Response>;
   invalidate: () => Promise<void>;
 };
 
@@ -40,15 +42,31 @@ export default function AuthorProvider({ children }: { children: React.ReactNode
     });
   }
 
+  async function updateAuthor(id: number, data: UpdateAuthorSchema) {
+    return Fetch(`/api/authors/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...data }),
+    });
+  }
+
+  async function deleteAuthor(id: number) {
+    return Fetch(`/api/authors/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+  }
+
   async function invalidate() {
-    setLoading(true);
     const data = await fetchAuthors();
-    setAuthors(data!);
-    setLoading(false);
+    setAuthors(data);
   }
 
   return (
-    <Context.Provider value={{ loading, authors, addAuthor, invalidate }}>
+    <Context.Provider value={{ loading, authors, invalidate, addAuthor, updateAuthor, deleteAuthor }}>
       <>{children}</>
     </Context.Provider>
   );
