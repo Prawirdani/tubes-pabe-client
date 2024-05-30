@@ -1,5 +1,5 @@
 import { Fetch } from '@/api/fetcher';
-import { createContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 type AuthCtxType = {
   user: AuthUser;
@@ -13,7 +13,8 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const AuthCtx = createContext<AuthCtxType>({} as AuthCtxType);
+const AuthCtx = createContext<AuthCtxType>({} as AuthCtxType);
+export const useAuth = () => useContext(AuthCtx);
 
 export default function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<AuthUser>({} as AuthUser);

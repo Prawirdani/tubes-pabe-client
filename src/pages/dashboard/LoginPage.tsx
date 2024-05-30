@@ -2,28 +2,23 @@ import TitleSetter from '@/components/pageTitle';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/context/useAuth';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { H2 } from '@/components/typography';
 import { isErrorResponse } from '@/api/fetcher';
-
-const formSchema = z.object({
-  email: z.string().min(1, { message: 'Mohon isi kolom email' }).email(),
-  password: z.string().min(1, { message: 'Mohon isi kolom password' }),
-});
+import { useAuth } from '@/context/AuthProvider';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormSchema, loginFormSchema } from '@/lib/schemas/auth';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -32,7 +27,7 @@ export default function LoginPage() {
 
   const { login } = useAuth();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: LoginFormSchema) => {
     const res = await login(values.email, values.password);
     if (!res.ok) {
       const resBody = await res.json();

@@ -1,14 +1,13 @@
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import './App.css';
 import Dashboard from './layout/Dashboard';
-import LoginPage from './pages/LoginPage';
-import AuthProvider from './context/AuthProvider';
+import AuthProvider, { useAuth } from './context/AuthProvider';
 import { useEffect, useState } from 'react';
 import Loader from '@/components/ui/loader';
-import { useAuth } from './context/useAuth';
 import { BooksPage, UserPage } from './pages/dashboard';
 import { Toaster } from './components/ui/toaster';
 import AuthorPage from './pages/dashboard/AuthorPage';
+import LoginPage from './pages/dashboard/LoginPage';
 
 export default function App() {
   const router = createBrowserRouter([

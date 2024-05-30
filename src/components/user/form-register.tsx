@@ -7,16 +7,17 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useEffect, useState } from 'react';
-import { RegisterSchema, registerSchema, useUsers } from '@/context/UserProvider';
+import { useUsers } from '@/context/UserProvider';
 import { isErrorResponse } from '@/api/fetcher';
+import { UserRegisterSchema, userRegisterSchema } from '@/lib/schemas/user';
 
 export const RegisterUserForm = () => {
   const { invalidate, registerUser } = useUsers();
   const [open, setOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const form = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<UserRegisterSchema>({
+    resolver: zodResolver(userRegisterSchema),
     defaultValues: {
       nama: '',
       email: '',
@@ -37,11 +38,11 @@ export const RegisterUserForm = () => {
     setApiError(null);
   }, [open]);
 
-  const onSubmit = async (data: RegisterSchema) => {
+  const onSubmit = async (data: UserRegisterSchema) => {
     const res = await registerUser(data);
     if (!res.ok) {
       const resBody = await res.json();
-      setApiError(isErrorResponse(resBody) ? resBody.error.message : 'Terjadi kesalahan.');
+      setApiError(isErrorResponse(resBody) ? resBody.error.message : 'Terjadi Kesalahan');
       return;
     }
     invalidate();

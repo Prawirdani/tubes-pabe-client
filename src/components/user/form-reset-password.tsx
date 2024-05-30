@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { ResetPasswordSchema, resetPasswordSchema, useUsers } from '@/context/UserProvider';
+import { useUsers } from '@/context/UserProvider';
+import { UserResetPasswordSchema, userResetPasswordSchema } from '@/lib/schemas/user';
+import { isErrorResponse } from '@/api/fetcher';
 
 interface Props {
   open: boolean;
@@ -19,8 +21,8 @@ export const ResetPasswordForm = ({ open, setOpen, updateTarget }: Props) => {
 
   const { invalidate, resetPassword } = useUsers();
 
-  const form = useForm<ResetPasswordSchema>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<UserResetPasswordSchema>({
+    resolver: zodResolver(userResetPasswordSchema),
   });
 
   const {
@@ -39,11 +41,11 @@ export const ResetPasswordForm = ({ open, setOpen, updateTarget }: Props) => {
     setApiError(null);
   }, [open, updateTarget]);
 
-  const onSubmit = async (data: ResetPasswordSchema) => {
+  const onSubmit = async (data: UserResetPasswordSchema) => {
     const res = await resetPassword(data);
     if (!res.ok) {
-      const resBody = (await res.json()) as ErrorResponse;
-      setApiError(resBody.error.message);
+      const resBody = await res.json();
+      setApiError(isErrorResponse(resBody) ? resBody.error.message : 'Terjadi Kesalahan');
       return;
     }
     invalidate();
