@@ -10,14 +10,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AddBookSchema, addBookSchema } from '@/lib/schemas/book';
-import { useBooks } from '@/context/BookProvider';
-import { useAuthor } from '@/context/AuthorProvider';
 import Loader from '../ui/loader';
+import { useAuthors, useBooks } from '@/context/hooks';
 
 export default function BookAddForm() {
-  const { loading, authors } = useAuthor();
-
   const [open, setOpen] = useState(false);
+
+  const { loading, authors } = useAuthors();
+  const { addBook, invalidate } = useBooks();
 
   const form = useForm<AddBookSchema>({
     resolver: zodResolver(addBookSchema),
@@ -38,7 +38,6 @@ export default function BookAddForm() {
     formState: { isSubmitting, errors },
   } = form;
 
-  const { addBook, invalidate } = useBooks();
   async function onSubmit(data: AddBookSchema) {
     try {
       const formData = new FormData();

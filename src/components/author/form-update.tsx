@@ -8,9 +8,9 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthor } from '@/context/AuthorProvider';
 import { UpdateAuthorSchema, updateAuthorSchema } from '@/lib/schemas/author';
 import { isErrorResponse } from '@/api/fetcher';
+import { useAuthors } from '@/context/hooks';
 
 interface Props {
   open: boolean;
@@ -20,7 +20,7 @@ interface Props {
 
 export default function UpdateAuthorForm({ open, setOpen, updateTarget }: Props) {
   const [apiError, setApiError] = useState<string | null>(null);
-  const { updateAuthor, invalidate } = useAuthor();
+  const { updateAuthor, invalidate } = useAuthors();
 
   const form = useForm<UpdateAuthorSchema>({
     resolver: zodResolver(updateAuthorSchema),

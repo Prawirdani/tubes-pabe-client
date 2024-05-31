@@ -1,7 +1,7 @@
 import { Fetch } from '@/api/fetcher';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
 
-type AuthCtxType = {
+type AuthContextType = {
   user: AuthUser;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<Response>;
@@ -9,14 +9,9 @@ type AuthCtxType = {
   logout: () => Promise<void>;
 };
 
-type Props = {
-  children: React.ReactNode;
-};
+export const AuthCtx = createContext<AuthContextType | undefined>(undefined);
 
-const AuthCtx = createContext<AuthCtxType>({} as AuthCtxType);
-export const useAuth = () => useContext(AuthCtx);
-
-export default function AuthProvider({ children }: Props) {
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser>({} as AuthUser);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 

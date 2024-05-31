@@ -1,7 +1,6 @@
 import TitleSetter from '@/components/pageTitle';
 import { H2 } from '@/components/typography';
 import Loader from '@/components/ui/loader';
-import { useAuthor } from '@/context/AuthorProvider';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { SquarePen, Trash } from 'lucide-react';
@@ -10,9 +9,10 @@ import AddAuthorForm from './form-add';
 import UpdateAuthorForm from './form-update';
 import { useState } from 'react';
 import DeleteAuthorDialog from './dialog-delete';
+import { useAuthors } from '@/context/hooks';
 
 export default function Page() {
-  const { loading, authors } = useAuthor();
+  const { loading, authors } = useAuthors();
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [updateTarget, setUpdateTarget] = useState<Author>({} as Author);

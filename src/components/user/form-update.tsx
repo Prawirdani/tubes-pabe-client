@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { useUsers } from '@/context/UserProvider';
 import { UserUpdateSchema, userUpdateSchema } from '@/lib/schemas/user';
 import { isErrorResponse } from '@/api/fetcher';
+import { useUsers } from '@/context/hooks';
 
 interface Props {
   open: boolean;

@@ -2,9 +2,9 @@ import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useAuthor } from '@/context/AuthorProvider';
 import { isErrorResponse } from '@/api/fetcher';
 import { Loader2 } from 'lucide-react';
+import { useAuthors } from '@/context/hooks';
 
 interface Props {
   open: boolean;
@@ -15,7 +15,7 @@ interface Props {
 export default function DeleteAuthorDialog({ open, setOpen, id }: Props) {
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { deleteAuthor, invalidate } = useAuthor();
+  const { deleteAuthor, invalidate } = useAuthors();
 
   useEffect(() => {
     setApiError(null);

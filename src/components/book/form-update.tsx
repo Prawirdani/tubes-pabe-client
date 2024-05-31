@@ -10,9 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UpdateBookSchema, updateBookSchema } from '@/lib/schemas/book';
-import { useBooks } from '@/context/BookProvider';
-import { useAuthor } from '@/context/AuthorProvider';
 import Loader from '../ui/loader';
+import { useAuthors, useBooks } from '@/context/hooks';
 
 interface Props {
   open: boolean;
@@ -22,7 +21,7 @@ interface Props {
 
 export default function BookUpdateForm({ open, setOpen, updateTarget }: Props) {
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { loading, authors } = useAuthor();
+  const { loading, authors } = useAuthors();
   const { updateBook, invalidate, deleteBook } = useBooks();
 
   const form = useForm<UpdateBookSchema>({

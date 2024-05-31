@@ -1,7 +1,7 @@
 import { Fetch } from '@/api/fetcher';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-type Context = {
+type BookContextType = {
   loading: boolean;
   books: Book[];
   search: (query: string) => Promise<void>;
@@ -10,8 +10,7 @@ type Context = {
   updateBook: (id: number, formData: FormData) => Promise<Response>;
   deleteBook: (id: number) => Promise<Response>;
 };
-export const BooksContext = createContext<Context>({} as Context);
-export const useBooks = () => useContext(BooksContext);
+export const BookCtx = createContext<BookContextType | undefined>(undefined);
 
 export default function BooksProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -73,8 +72,8 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
   }
 
   return (
-    <BooksContext.Provider value={{ loading, books, invalidate, search, addBook, updateBook, deleteBook }}>
+    <BookCtx.Provider value={{ loading, books, invalidate, search, addBook, updateBook, deleteBook }}>
       <>{children}</>
-    </BooksContext.Provider>
+    </BookCtx.Provider>
   );
 }

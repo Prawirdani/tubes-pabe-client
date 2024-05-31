@@ -2,7 +2,6 @@ import BookCard from '@/components/book/card';
 import TitleSetter from '@/components/pageTitle';
 import { H2 } from '@/components/typography';
 import Loader from '@/components/ui/loader';
-import { useBooks } from '@/context/BookProvider';
 import BookAddForm from './form-add';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,7 @@ import { Label } from '../ui/label';
 import { Loader2, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import BookUpdateForm from './form-update';
+import { useBooks } from '@/context/hooks';
 
 export default function Page() {
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);

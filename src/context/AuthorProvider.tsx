@@ -1,8 +1,8 @@
 import { Fetch } from '@/api/fetcher';
 import { AddAuthorSchema, UpdateAuthorSchema } from '@/lib/schemas/author';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-type AuthorContext = {
+type AuthorContextType = {
   loading: boolean;
   authors: Author[];
   addAuthor: (data: AddAuthorSchema) => Promise<Response>;
@@ -11,8 +11,7 @@ type AuthorContext = {
   invalidate: () => Promise<void>;
 };
 
-const Context = createContext<AuthorContext>({} as AuthorContext);
-export const useAuthor = () => useContext(Context);
+export const AuthorCtx = createContext<AuthorContextType | undefined>(undefined);
 
 export default function AuthorProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -66,8 +65,8 @@ export default function AuthorProvider({ children }: { children: React.ReactNode
   }
 
   return (
-    <Context.Provider value={{ loading, authors, invalidate, addAuthor, updateAuthor, deleteAuthor }}>
+    <AuthorCtx.Provider value={{ loading, authors, invalidate, addAuthor, updateAuthor, deleteAuthor }}>
       <>{children}</>
-    </Context.Provider>
+    </AuthorCtx.Provider>
   );
 }

@@ -1,8 +1,8 @@
 import { Fetch, FetchToast } from '@/api/fetcher';
 import { UserRegisterSchema, UserResetPasswordSchema, UserUpdateSchema } from '@/lib/schemas/user';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-type Context = {
+type UserContextType = {
   // Fetch State
   loading: boolean;
   // Data State
@@ -15,8 +15,7 @@ type Context = {
   deleteUser: (id: number) => Promise<Response>;
 };
 
-export const UsersContext = createContext<Context>({} as Context);
-export const useUsers = () => useContext(UsersContext);
+export const UserCtx = createContext<UserContextType | undefined>(undefined);
 
 export default function UsersProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
@@ -87,7 +86,7 @@ export default function UsersProvider({ children }: { children: React.ReactNode 
   }
 
   return (
-    <UsersContext.Provider
+    <UserCtx.Provider
       value={{
         loading,
         users,
@@ -99,6 +98,6 @@ export default function UsersProvider({ children }: { children: React.ReactNode 
       }}
     >
       {children}
-    </UsersContext.Provider>
+    </UserCtx.Provider>
   );
 }

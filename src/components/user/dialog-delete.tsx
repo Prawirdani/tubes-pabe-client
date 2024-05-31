@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { isErrorResponse } from '@/api/fetcher';
 import { Loader2 } from 'lucide-react';
-import { useUsers } from '@/context/UserProvider';
+import { useUsers } from '@/context/hooks';
 
 interface Props {
   open: boolean;

@@ -8,15 +8,15 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthor } from '@/context/AuthorProvider';
 import { AddAuthorSchema, addAuthorSchema } from '@/lib/schemas/author';
 import { isErrorResponse } from '@/api/fetcher';
+import { useAuthors } from '@/context/hooks';
 
 export default function AddAuthorForm() {
   const [open, setOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const { addAuthor, invalidate } = useAuthor();
+  const { addAuthor, invalidate } = useAuthors();
 
   const form = useForm<AddAuthorSchema>({
     resolver: zodResolver(addAuthorSchema),

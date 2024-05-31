@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from '@/context/hooks';
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
