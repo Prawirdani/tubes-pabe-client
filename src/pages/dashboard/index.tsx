@@ -31,7 +31,7 @@ function PersistLogin() {
   );
 }
 
-export const dashboardRoutes: RouteObject[] = [
+export const adminRoutes: RouteObject[] = [
   {
     element: (
       <AuthProvider>
