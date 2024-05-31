@@ -1,4 +1,4 @@
-import { Fetch } from '@/api/fetcher';
+import { Fetch } from '@/lib/fetcher';
 import { createContext, useEffect, useState } from 'react';
 
 type BookContextType = {

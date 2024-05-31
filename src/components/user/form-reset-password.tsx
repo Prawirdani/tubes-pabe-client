@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { UserResetPasswordSchema, userResetPasswordSchema } from '@/lib/schemas/user';
-import { isErrorResponse } from '@/api/fetcher';
+import { isErrorResponse } from '@/lib/fetcher';
 import { useUsers } from '@/context/hooks';
 
 interface Props {

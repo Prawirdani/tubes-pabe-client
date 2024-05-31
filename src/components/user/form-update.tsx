@@ -8,103 +8,103 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { UserUpdateSchema, userUpdateSchema } from '@/lib/schemas/user';
-import { isErrorResponse } from '@/api/fetcher';
+import { isErrorResponse } from '@/lib/fetcher';
 import { useUsers } from '@/context/hooks';
 
 interface Props {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  updateTarget: User;
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	updateTarget: User;
 }
 export const UserUpdateForm = ({ open, setOpen, updateTarget }: Props) => {
-  const [apiError, setApiError] = useState<string | null>(null);
+	const [apiError, setApiError] = useState<string | null>(null);
 
-  const { invalidate, updateUser } = useUsers();
+	const { invalidate, updateUser } = useUsers();
 
-  const form = useForm<UserUpdateSchema>({
-    resolver: zodResolver(userUpdateSchema),
-  });
+	const form = useForm<UserUpdateSchema>({
+		resolver: zodResolver(userUpdateSchema),
+	});
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { isSubmitting },
-  } = form;
+	const {
+		handleSubmit,
+		control,
+		reset,
+		formState: { isSubmitting },
+	} = form;
 
-  useEffect(() => {
-    reset({
-      ...updateTarget,
-    });
-    setApiError(null);
-  }, [open, updateTarget]);
+	useEffect(() => {
+		reset({
+			...updateTarget,
+		});
+		setApiError(null);
+	}, [open, updateTarget]);
 
-  const onSubmit = async (data: UserUpdateSchema) => {
-    const res = await updateUser(updateTarget.id, data);
-    if (!res.ok) {
-      const resBody = await res.json();
-      setApiError(isErrorResponse(resBody) ? resBody.error.message : 'Terjadi Kesalahan');
-      return;
-    }
-    invalidate();
-    toast({
-      description: 'Berhasil update akun pengguna.',
-    });
-    setOpen(false);
-  };
+	const onSubmit = async (data: UserUpdateSchema) => {
+		const res = await updateUser(updateTarget.id, data);
+		if (!res.ok) {
+			const resBody = await res.json();
+			setApiError(isErrorResponse(resBody) ? resBody.error.message : 'Terjadi Kesalahan');
+			return;
+		}
+		invalidate();
+		toast({
+			description: 'Berhasil update akun pengguna.',
+		});
+		setOpen(false);
+	};
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[525px]">
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <DialogHeader className="mb-4">
-              <DialogTitle>Update data pengguna</DialogTitle>
-            </DialogHeader>
-            <div className="mb-4 space-y-2">
-              {/* Input Nama */}
-              <FormField
-                control={control}
-                name="nama"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="nama">Nama</FormLabel>
-                    <FormControl>
-                      <Input id="nama" placeholder="Masukkan nama pengguna" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Input Nama */}
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogContent className="sm:max-w-[525px]">
+				<Form {...form}>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<DialogHeader className="mb-4">
+							<DialogTitle>Update data pengguna</DialogTitle>
+						</DialogHeader>
+						<div className="mb-4 space-y-2">
+							{/* Input Nama */}
+							<FormField
+								control={control}
+								name="nama"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel htmlFor="nama">Nama</FormLabel>
+										<FormControl>
+											<Input id="nama" placeholder="Masukkan nama pengguna" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							{/* Input Nama */}
 
-              {/* Input Email */}
-              <FormField
-                control={control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="email">Ulangi password</FormLabel>
-                    <FormControl>
-                      <Input id="email" placeholder="Masukkan email pengguna" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Input Email */}
+							{/* Input Email */}
+							<FormField
+								control={control}
+								name="email"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel htmlFor="email">Ulangi password</FormLabel>
+										<FormControl>
+											<Input id="email" placeholder="Masukkan email pengguna" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							{/* Input Email */}
 
-              <p className="text-sm text-destructive">{apiError}</p>
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit" disabled={isSubmitting}>
-                <span>Simpan</span>
-                {isSubmitting && <Loader2 className="animate-spin ml-2" />}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
+							<p className="text-sm text-destructive">{apiError}</p>
+						</div>
+						<div className="flex justify-end">
+							<Button type="submit" disabled={isSubmitting}>
+								<span>Simpan</span>
+								{isSubmitting && <Loader2 className="animate-spin ml-2" />}
+							</Button>
+						</div>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
+	);
 };

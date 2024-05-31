@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { H2 } from '@/components/typography';
-import { isErrorResponse } from '@/api/fetcher';
+import { isErrorResponse } from '@/lib/fetcher';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginFormSchema, loginFormSchema } from '@/lib/schemas/auth';
 import { useAuth } from '@/context/hooks';

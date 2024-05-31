@@ -1,4 +1,4 @@
-import { Fetch } from '@/api/fetcher';
+import { Fetch } from '@/lib/fetcher';
 import { createContext, useState } from 'react';
 
 type AuthContextType = {

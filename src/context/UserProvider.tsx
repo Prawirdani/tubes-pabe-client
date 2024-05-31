@@ -1,4 +1,4 @@
-import { Fetch, FetchToast } from '@/api/fetcher';
+import { Fetch, FetchToast } from '@/lib/fetcher';
 import { UserRegisterSchema, UserResetPasswordSchema, UserUpdateSchema } from '@/lib/schemas/user';
 import { createContext, useEffect, useState } from 'react';
 
