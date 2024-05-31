@@ -5,8 +5,8 @@ import LoginPage from './LoginPage';
 import { Outlet, RouteObject } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Loader } from 'lucide-react';
-import Dashboard from '@/layout/Dashboard';
 import { useAuth } from '@/context/hooks';
+import Dashboard from '@/components/layout/dashboard/Dashboard';
 
 function PersistLogin() {
   const [isLoading, setIsLoading] = useState(true);
