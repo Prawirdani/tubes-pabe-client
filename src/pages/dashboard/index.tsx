@@ -7,12 +7,14 @@ import { useEffect, useState } from 'react';
 import { Loader } from 'lucide-react';
 import { useAuth } from '@/context/hooks';
 import Dashboard from '@/components/layout/dashboard/Dashboard';
+import AuthProvider from '@/context/AuthProvider';
 
 function PersistLogin() {
   const [isLoading, setIsLoading] = useState(true);
   const { identify } = useAuth();
 
   useEffect(() => {
+    console.log('Persist Login Executed');
     const identifyUser = async () => {
       await identify().finally(() => setIsLoading(false));
     };
@@ -31,7 +33,11 @@ function PersistLogin() {
 
 export const dashboardRoutes: RouteObject[] = [
   {
-    element: <PersistLogin />,
+    element: (
+      <AuthProvider>
+        <PersistLogin />
+      </AuthProvider>
+    ),
     children: [
       {
         path: '/admin',

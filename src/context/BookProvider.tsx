@@ -24,9 +24,7 @@ export default function BooksProvider({ children }: { children: React.ReactNode 
   }, []);
 
   async function fetchBooks() {
-    const response = await Fetch('/api/books', {
-      credentials: 'include',
-    });
+    const response = await fetch('/api/books');
     const resBody = (await response.json()) as ApiResponse<Book[]>;
     return resBody.data;
   }
