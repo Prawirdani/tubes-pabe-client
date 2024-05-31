@@ -24,7 +24,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
 
   const handleLogout = async () => {
     await logout().finally(() => {
-      navigate('/admin/login', { replace: true });
+      navigate('/auth/login', { replace: true });
     });
   };
 

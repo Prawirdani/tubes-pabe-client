@@ -26,6 +26,6 @@ export default function Dashboard() {
       </div>
     </div>
   ) : (
-    <Navigate to="/admin/login" replace />
+    <Navigate to="/auth/login" replace />
   );
 }

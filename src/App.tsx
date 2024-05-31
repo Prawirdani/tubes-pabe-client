@@ -7,6 +7,7 @@ import { H1 } from '@/components/typography';
 import { Frown } from 'lucide-react';
 import BookProvider from './context/BookProvider';
 import AuthorProvider from './context/AuthorProvider';
+import AuthProvider from './context/AuthProvider';
 
 export default function App() {
   const router = createBrowserRouter([
@@ -18,12 +19,14 @@ export default function App() {
     },
   ]);
   return (
-    <BookProvider>
-      <AuthorProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-      </AuthorProvider>
-    </BookProvider>
+    <AuthProvider>
+      <BookProvider>
+        <AuthorProvider>
+          <RouterProvider router={router} />
+          <Toaster />
+        </AuthorProvider>
+      </BookProvider>
+    </AuthProvider>
   );
 }
 function NotFound() {

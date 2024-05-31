@@ -4,10 +4,9 @@ import AuthorPage from './AuthorPage';
 import LoginPage from './LoginPage';
 import { Outlet, RouteObject } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Loader } from 'lucide-react';
 import { useAuth } from '@/context/hooks';
 import Dashboard from '@/components/layout/dashboard/Dashboard';
-import AuthProvider from '@/context/AuthProvider';
+import Loader from '@/components/ui/loader';
 
 function PersistLogin() {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,11 +32,11 @@ function PersistLogin() {
 
 export const adminRoutes: RouteObject[] = [
   {
-    element: (
-      <AuthProvider>
-        <PersistLogin />
-      </AuthProvider>
-    ),
+    path: '/auth/login',
+    element: <LoginPage />,
+  },
+  {
+    element: <PersistLogin />,
     children: [
       {
         path: '/admin',
@@ -58,9 +57,5 @@ export const adminRoutes: RouteObject[] = [
         ],
       },
     ],
-  },
-  {
-    path: '/admin/login',
-    element: <LoginPage />,
   },
 ];
