@@ -14,208 +14,208 @@ import Loader from '../ui/loader';
 import { useAuthors, useBooks } from '@/context/hooks';
 
 export default function BookAddForm() {
-  const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 
-  const { loading, authors } = useAuthors();
-  const { addBook, invalidate } = useBooks();
+	const { loading, authors, invalidate: invalidateAuthor } = useAuthors();
+	const { addBook, invalidate } = useBooks();
 
-  const form = useForm<AddBookSchema>({
-    resolver: zodResolver(addBookSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      authorId: '',
-      price: 0,
-      image: '',
-    },
-  });
+	const form = useForm<AddBookSchema>({
+		resolver: zodResolver(addBookSchema),
+		defaultValues: {
+			title: '',
+			description: '',
+			authorId: '',
+			price: 0,
+			image: '',
+		},
+	});
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    register,
-    formState: { isSubmitting, errors },
-  } = form;
+	const {
+		handleSubmit,
+		control,
+		reset,
+		register,
+		formState: { isSubmitting, errors },
+	} = form;
 
-  async function onSubmit(data: AddBookSchema) {
-    try {
-      const formData = new FormData();
-      formData.append(
-        'data',
-        JSON.stringify({
-          title: data.title,
-          description: data.description,
-          authorId: Number(data.authorId),
-          price: Number(data.price),
-        }),
-      );
-      formData.append('image', data.image[0]);
+	async function onSubmit(data: AddBookSchema) {
+		try {
+			const formData = new FormData();
+			formData.append(
+				'data',
+				JSON.stringify({
+					title: data.title,
+					description: data.description,
+					authorId: Number(data.authorId),
+					price: Number(data.price),
+				}),
+			);
+			formData.append('image', data.image[0]);
 
-      const res = await addBook(formData);
+			const res = await addBook(formData);
 
-      if (!res.ok) {
-        toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
-        return;
-      }
+			if (!res.ok) {
+				toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
+				return;
+			}
 
-      toast({ description: 'Berhasil menambahkan buku' });
-      await invalidate();
-      setOpen(false);
-    } catch (error) {
-      toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
-    }
-  }
+			toast({ description: 'Berhasil menambahkan buku' });
+			await Promise.all([invalidate(), invalidateAuthor()]);
+			setOpen(false);
+		} catch (error) {
+			toast({ description: 'Gagal menambahkan buku', variant: 'destructive' });
+		}
+	}
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  let imageInputRef: HTMLInputElement;
-  const { ref, ...imageRegister } = register('image');
+	const [imagePreview, setImagePreview] = useState<string | null>(null);
+	let imageInputRef: HTMLInputElement;
+	const { ref, ...imageRegister } = register('image');
 
-  const handleImageClick = () => {
-    imageInputRef.click();
-  };
-  const imageOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    form.setValue('image', e.target.files);
-    if (files && files[0]) {
-      const imageUrl = URL.createObjectURL(files[0]);
-      setImagePreview(imageUrl);
-    }
-  };
+	const handleImageClick = () => {
+		imageInputRef.click();
+	};
+	const imageOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
+		form.setValue('image', e.target.files);
+		if (files && files[0]) {
+			const imageUrl = URL.createObjectURL(files[0]);
+			setImagePreview(imageUrl);
+		}
+	};
 
-  useEffect(() => {
-    reset();
-    setImagePreview(null);
-  }, [open]);
+	useEffect(() => {
+		reset();
+		setImagePreview(null);
+	}, [open]);
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {/* Dialog Trigger Button */}
-      <Button className="space-x-1" onClick={() => setOpen(true)}>
-        <Plus />
-        <span>Buku</span>
-      </Button>
-      {/* Dialog Trigger Button */}
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			{/* Dialog Trigger Button */}
+			<Button className="space-x-1" onClick={() => setOpen(true)}>
+				<Plus />
+				<span>Buku</span>
+			</Button>
+			{/* Dialog Trigger Button */}
 
-      <DialogContent className="sm:max-w-[850px] px-8">
-        {loading ? (
-          <Loader />
-        ) : (
-          <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <DialogHeader className="mb-4">
-                <DialogTitle>Tambah Buku baru</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-3 gap-8 mb-4">
-                <input
-                  type="file"
-                  id="image"
-                  hidden
-                  {...imageRegister}
-                  ref={(e) => {
-                    imageInputRef = e!;
-                  }}
-                  onChange={imageOnChange}
-                />
-                <div
-                  className="col-span-1 border rounded-md justify-center items-center flex flex-col hover:cursor-pointer"
-                  onClick={handleImageClick}
-                >
-                  {imagePreview ? (
-                    <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
-                  ) : (
-                    <BookImage className="h-12 w-12" />
-                  )}
-                  {errors.image && (
-                    <span className="mt-2 text-sm text-destructive text-center">{String(errors.image.message)}</span>
-                  )}
-                </div>
+			<DialogContent className="sm:max-w-[850px] px-8">
+				{loading ? (
+					<Loader />
+				) : (
+					<Form {...form}>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<DialogHeader className="mb-4">
+								<DialogTitle>Tambah Buku baru</DialogTitle>
+							</DialogHeader>
+							<div className="grid grid-cols-3 gap-8 mb-4">
+								<input
+									type="file"
+									id="image"
+									hidden
+									{...imageRegister}
+									ref={(e) => {
+										imageInputRef = e!;
+									}}
+									onChange={imageOnChange}
+								/>
+								<div
+									className="col-span-1 border rounded-md justify-center items-center flex flex-col hover:cursor-pointer"
+									onClick={handleImageClick}
+								>
+									{imagePreview ? (
+										<img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+									) : (
+										<BookImage className="h-12 w-12" />
+									)}
+									{errors.image && (
+										<span className="mt-2 text-sm text-destructive text-center">{String(errors.image.message)}</span>
+									)}
+								</div>
 
-                <div className="space-y-2 col-span-2">
-                  <FormField
-                    control={control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="title">Judul Buku</FormLabel>
-                        <FormControl>
-                          <Input id="title" placeholder="Masukkan Judul Buku" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="price">Harga</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Masukkan harga buku"
-                            id="price"
-                            type="number"
-                            {...field}
-                            onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name="authorId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="authorId">Kategori Menu</FormLabel>
-                        <Select onValueChange={field.onChange} name={field.name}>
-                          <FormControl id="authorId">
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih Author buku" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {authors.map((author) => (
-                              <SelectItem key={author.id} value={String(author.id)}>
-                                {author.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+								<div className="space-y-2 col-span-2">
+									<FormField
+										control={control}
+										name="title"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel htmlFor="title">Judul Buku</FormLabel>
+												<FormControl>
+													<Input id="title" placeholder="Masukkan Judul Buku" {...field} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={control}
+										name="price"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel htmlFor="price">Harga</FormLabel>
+												<FormControl>
+													<Input
+														placeholder="Masukkan harga buku"
+														id="price"
+														type="number"
+														{...field}
+														onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={control}
+										name="authorId"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel htmlFor="authorId">Kategori Menu</FormLabel>
+												<Select onValueChange={field.onChange} name={field.name}>
+													<FormControl id="authorId">
+														<SelectTrigger>
+															<SelectValue placeholder="Pilih Author buku" />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent className="max-h-56">
+														{authors.map((author) => (
+															<SelectItem key={author.id} value={String(author.id)}>
+																{author.name}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
 
-                  <div>
-                    <FormField
-                      control={control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel htmlFor="description">Deskripsi</FormLabel>
-                          <FormControl>
-                            <Textarea id="description" placeholder="Masukkan deskripsi buku" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <Button type="submit" disabled={isSubmitting}>
-                  <span>Tambah</span>
-                  {isSubmitting && <Loader2 className="animate-spin ml-2" />}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
+									<div>
+										<FormField
+											control={control}
+											name="description"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel htmlFor="description">Deskripsi</FormLabel>
+													<FormControl>
+														<Textarea id="description" placeholder="Masukkan deskripsi buku" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+								</div>
+							</div>
+							<div className="flex justify-end">
+								<Button type="submit" disabled={isSubmitting}>
+									<span>Tambah</span>
+									{isSubmitting && <Loader2 className="animate-spin ml-2" />}
+								</Button>
+							</div>
+						</form>
+					</Form>
+				)}
+			</DialogContent>
+		</Dialog>
+	);
 }
