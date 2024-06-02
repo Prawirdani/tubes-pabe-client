@@ -10,11 +10,7 @@
 ```bash
     npm install
 ```
-2. Run Database Migration.
-```bash
-    npm run migrate
-```
-3. Run the server.
+2. Run the development server.
 ```bash
     npm run dev
 ```
